@@ -3,11 +3,11 @@ function banana_detector_live
 % Highlights detections with a GREEN perimeter and a RED bounding box + label.
 % Requirements: Image Processing Toolbox + Support Package for USB Webcams.
 
-% --- Camera setup ---
+% --- Camera setup adjust resolution as needed ---
 cam = webcam;                    % use webcam(2) if you have multiple
 cam.Resolution = '640x480';
 
-% --- Tunable parameters ---
+% --- Tunable parameters below ---
 % HSV thresholds for yellow (hue in [0,1])
 H_MIN = 0.10; H_MAX = 0.18;      % widen to [0.09 0.20] if needed
 S_MIN = 0.35; V_MIN = 0.25;      % require some saturation/brightness
@@ -17,12 +17,10 @@ ECC_MIN  = 0.70;                 % elongated shape
 SOL_MIN  = 0.60;                 % solidity lower bound
 SOL_MAX  = 0.95;                 % avoid perfectly convex/straight
 CURVE_MIN = 0.05;                % convexity deficit: 1 - Area/ConvexArea
-
-% --- Display setup ---
+% --- Tunable parameters above ---
 hFig = figure('Name','Banana Detector (press Q to quit)','NumberTitle','off');
 set(hFig,'KeyPressFcn',@(src,ev) setappdata(src,'quit',strcmpi(ev.Key,'q')));
 
-% --- Main loop (fixed scalar logicals) ---
 while ishandle(hFig) && (isempty(getappdata(hFig,'quit')) || ~getappdata(hFig,'quit'))
     % 1) Grab frame
     rgb = snapshot(cam);
@@ -79,7 +77,6 @@ while ishandle(hFig) && (isempty(getappdata(hFig,'quit')) || ~getappdata(hFig,'q
     drawnow;
 end
 
-% --- Cleanup ---
 if isvalid(hFig), close(hFig); end
 clear cam;
 end
@@ -94,3 +91,4 @@ green = cat(3, zeros(size(img,1),size(img,2), 'uint8'), ...
                zeros(size(img,1),size(img,2), 'uint8'));
 out(perimMask3) = green(perimMask3);
 end
+
